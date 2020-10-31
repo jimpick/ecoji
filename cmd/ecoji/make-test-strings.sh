@@ -1,0 +1,1 @@
+(for f in `seq 1 1000`; do dd if=/dev/urandom of=~/tmp/bytes.bin bs=1 count=200 2> /dev/null ; X=$(cat ~/tmp/bytes.bin | ./ecoji); echo "$X"; done) | jq --raw-input --slurp 'split("\n")' > ../../wikipedia-unicode/testing/strings.json

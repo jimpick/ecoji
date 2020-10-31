@@ -1,28 +1,26 @@
 package ecoji
 
-
-//The mappings for this file were generated in two steps.  
+//The mappings for this file were generated in two steps.
 
 /*
-    #First, tan the following command to generate emojis.txt
-    wget -qO- https://unicode.org/Public/emoji/11.0/emoji-test.txt | cut -f 1 -d ' ' | sort -u | sed '/^[#0]/ d' | sed '/^\s*$/d' > /tmp/emojis.txt
+   #First, tan the following command to generate emojis.txt
+   wget -qO- https://unicode.org/Public/emoji/11.0/emoji-test.txt | cut -f 1 -d ' ' | sort -u | sed '/^[#0]/ d' | sed '/^\s*$/d' > /tmp/emojis.txt
 */
 
-
 /*
 
-    //Second, used the following Java code to generate the mappings in this file
-    try (Stream<String> stream = Files.lines(Paths.get("/tmp/emojis.txt"))) {
-      List<String> emojis = stream.collect(Collectors.toList());
+   //Second, used the following Java code to generate the mappings in this file
+   try (Stream<String> stream = Files.lines(Paths.get("/tmp/emojis.txt"))) {
+     List<String> emojis = stream.collect(Collectors.toList());
 
-      System.out.println("const padding41 rune=0x" + emojis.remove(256));
-      System.out.println("const padding42 rune=0x" + emojis.remove(512));
-      System.out.println("const padding43 rune=0x" + emojis.remove(768));
+     System.out.println("const padding41 rune=0x" + emojis.remove(256));
+     System.out.println("const padding42 rune=0x" + emojis.remove(512));
+     System.out.println("const padding43 rune=0x" + emojis.remove(768));
 
-      for (int i = 0; i < 1024; i++) {
-        System.out.println("emojis[" + i + "]=0x" + emojis.get(i));
-      }
-    }
+     for (int i = 0; i < 1024; i++) {
+       System.out.println("emojis[" + i + "]=0x" + emojis.get(i));
+     }
+   }
 */
 
 //This should sort before everything.  This is output when 3 or less input bytes are present.
@@ -42,8 +40,13 @@ const padding42 rune = 0x1F4D1
 //This should sort between emojis[767] and emojis[768]
 const padding43 rune = 0x1F64B
 
+const selectedGlyphs = "IJfijlrstºÌÍÎÏìíîïĨĩĪīĬĭĮįİıĴĵĺļľŀłŕŗřśŝşšţŧſƖƗƚƫƭǁǃǏǐǰȈȉȊȋȑȓșțɉḟṡṫẛʰʱʲʳʴʵʶʸʹʻʼʽʾʿˀˁ˂˃˄˅ˆˇˈˊˋˌˍˎˏːˑ˒˓˞˟ˠˡˢˣˤˬ˯˰˱˲˳˴˷˸˹˺˻˼˽˾ͱͿΐΙΪίιϊϳἰἱἲἳἴἵἶἷὶίῐῑῒΐῖῗῘῙІЇЈгзѓѕіїјґғҙӀӟꜣꝇꝉꝩꝲꝼꞁꞄꞅ꞉꞊Ꞌꞌɨɩɭɺɽɿʇʈᴉᴊᴬᴮᴯᴰᴱᴲᴳᴴᴵᴶᴷᴸᴹᴺᴻᴼᴽᴾᴿᵀᵁᵃᵄᵅᵇᵈᵉᵊᵋᵌᵍᵎᵏᵑᵒᵓᵔᵕᵖᵗᵘᵙᵛᵜᵝᵞᵟᵡᵢᵣᵤᵥᵦᵧᵨᵪᵮᵲᵳᵵᵻᵼﺍﻩﺁﺓءآ"
+
 var emojis [1024]rune
 var revEmojis map[rune]int
+
+var narrowGlyphs [256]rune
+var revNarrowGlyphs map[rune]int
 
 func init() {
 
@@ -1077,4 +1080,20 @@ func init() {
 	for i, r := range emojis {
 		revEmojis[r] = i
 	}
+
+	var i int = 0
+	revNarrowGlyphs = make(map[rune]int)
+	for _, runeValue := range selectedGlyphs {
+		narrowGlyphs[i] = runeValue
+		revNarrowGlyphs[runeValue] = i
+		// fmt.Printf("%v: %#U starts at byte position %d\n", i, runeValue, byteIndex)
+		i++
+	}
+
+	/*
+		const nihongo = "日本語"
+		for index, runeValue := range nihongo {
+			fmt.Printf("%#U starts at byte position %d\n", runeValue, index)
+		}
+	*/
 }

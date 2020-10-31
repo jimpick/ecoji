@@ -76,6 +76,7 @@ func encode(s []byte, w RuneWriter) (err error) {
 	return nil
 }
 
+/*
 func readFully(r io.Reader, buffer []byte) (n int, e error) {
 	num, err := r.Read(buffer)
 
@@ -87,23 +88,30 @@ func readFully(r io.Reader, buffer []byte) (n int, e error) {
 
 	return num, err
 }
+*/
 
 //Maps every 10 bits from the reader to one of 1024 Unicode emojis, writing the emojis.
 func Encode(r io.Reader, w RuneWriter, wrap uint) (err error) {
 
-	buffer := make([]byte, 5)
-	printed := uint(0)
+	counter := 0
+	// buffer := make([]byte, 5)
+	buffer := make([]byte, 1)
+	// printed := uint(0)
 
 	for {
 
-		num, err := readFully(r, buffer)
+		// num, err := readFully(r, buffer)
+		num, err := r.Read(buffer)
 
 		if num == 0 && err == io.EOF {
-			if printed > 0 {
-				if err := w.WriteByte('\n'); err != nil {
-					return err
+			/*
+				if printed > 0 {
+					if err := w.WriteByte('\n'); err != nil {
+						return err
+					}
 				}
-			}
+			*/
+			// fmt.Fprintf(w, "Jim %v\n", counter)
 			break
 		}
 
@@ -111,19 +119,27 @@ func Encode(r io.Reader, w RuneWriter, wrap uint) (err error) {
 			return err
 		}
 
-		if err := encode(buffer[0:num], w); err != nil {
-			return err
+		if num == 1 {
+			w.WriteRune(narrowGlyphs[buffer[0]])
+			counter++
 		}
-
-		if wrap > 0 {
-			printed += 4
-			if printed >= wrap {
-				if err := w.WriteByte('\n'); err != nil {
-					return err
-				}
-				printed = 0
+		/*
+			if err := encode(buffer[0:num], w); err != nil {
+				return err
 			}
-		}
+		*/
+
+		/*
+			if wrap > 0 {
+				printed += 4
+				if printed >= wrap {
+					if err := w.WriteByte('\n'); err != nil {
+						return err
+					}
+					printed = 0
+				}
+			}
+		*/
 
 	}
 

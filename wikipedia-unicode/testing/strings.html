@@ -1,0 +1,14 @@
+<h1>Testing Strings</h1>
+
+<script>
+async function run () {
+  const resp = await fetch('strings.json')
+  const strings = await resp.json()
+  for (const s of strings) {
+    const el = document.createElement('p')
+    el.textContent = s
+    document.body.appendChild(el)
+  }
+}
+run()
+</script>
